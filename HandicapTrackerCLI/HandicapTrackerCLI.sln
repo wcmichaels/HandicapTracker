@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandicapTrackerCLI", "HandicapTrackerCLI\HandicapTrackerCLI.csproj", "{AB90654E-1B3A-4875-AC90-5B7B3E183EF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB90654E-1B3A-4875-AC90-5B7B3E183EF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB90654E-1B3A-4875-AC90-5B7B3E183EF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB90654E-1B3A-4875-AC90-5B7B3E183EF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB90654E-1B3A-4875-AC90-5B7B3E183EF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA27BDA6-0ACF-49EB-A204-890B043CAB58}
+	EndGlobalSection
+EndGlobal
