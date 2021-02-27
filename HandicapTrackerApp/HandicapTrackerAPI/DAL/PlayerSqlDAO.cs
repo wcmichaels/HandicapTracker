@@ -10,7 +10,12 @@ namespace HandicapTrackerAPI.DAL
     public class PlayerSqlDAO : IPlayerDAO
     {
         private readonly string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=GolfAppDB;Trusted_Connection=true;";
-        private const string SQL_GET_PLAYER_BY_ID = "SELECT * FROM PLAYER WHERE PlayerId = @playerId;";
+        private const string SQL_GET_PLAYER_BY_ID = @"SELECT * FROM Player WHERE PlayerId = @playerId;
+                                                            SELECT * FROM GolfRound gr
+	                                                        JOIN Tee t ON t.TeeId = gr.TeeId
+	                                                        JOIN Course c ON c.CourseId = t.CourseId
+	                                                        WHERE gr.PlayerId = @playerId;";
+        private const string SQL_GET_PLAYERID_BY_USERNAME_PASSWORD = @"SELECT PlayerId FROM Player WHERE Username = @username AND Password = @password;";
         private const string SQL_LIST_PLAYERS = "SELECT * FROM Player";
         private const string SQL_CREATE_PLAYER = @"INSERT INTO PLAYER
                                                     (FirstName, LastName, UserName, Password, DOB, StreetAddress, City, State,
@@ -42,7 +47,53 @@ namespace HandicapTrackerAPI.DAL
                         player = RowToObject(rdr);
                     }
 
+                    if (rdr.NextResult())
+                    {
+
+                        while (rdr.Read())
+                        {
+                            GolfRound golfRound = GolfRoundSqlDAO.RowToObject(rdr);
+                            Tee tee = TeeSqlDAO.RowToObject(rdr);
+                            Course course = CourseSqlDAO.RowToObject(rdr);
+                            tee.Course = course;
+                            golfRound.Tee = tee;
+                            player.GolfRounds.Add(golfRound);
+                        }
+                    }
+
                     return player;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+
+                throw;
+            }
+        }
+
+        public Player GetPlayerByUsernamePassword(string username, string password)
+        {
+            Player player = null;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_GET_PLAYERID_BY_USERNAME_PASSWORD, conn);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+                    int playerId = Convert.ToInt32(cmd.ExecuteScalar());
+                    if (playerId > 0)
+                    {
+                        player = this.GetPlayerById(playerId);
+
+                    }
+
+                    return player;
+                  
                 }
 
             }
@@ -144,15 +195,16 @@ namespace HandicapTrackerAPI.DAL
                     AddPlayerParameters(player, cmd);
                     SqlDataReader rdr = cmd.ExecuteReader();
 
+                    player = null;
+          
+
                     if (rdr.Read())
                     {
                         player = RowToObject(rdr);
-                        return player;
                     }
-                    else
-                    {
-                        return null;
-                    }
+
+                    return player;
+
                 }
             }
             catch (Exception)
@@ -180,6 +232,13 @@ namespace HandicapTrackerAPI.DAL
             player.PostalCode = Convert.ToString(rdr["PostalCode"]);
             player.Email = Convert.ToString(rdr["Email"]);
             player.Phone = Convert.ToString(rdr["Phone"]);
+
+            //GolfRound round = new GolfRound();
+
+            //round.GolfRoundId = Convert.ToInt32(rdr["RoundId"]);
+            ////etc
+
+            //player.Ro
 
             return player;
         }

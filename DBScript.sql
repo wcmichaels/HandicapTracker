@@ -31,7 +31,7 @@ CREATE TABLE Player (
 
 CREATE TABLE Course (
 	CourseId INT IDENTITY,
-	Name NVARCHAR(100) NOT NULL,
+	CourseName NVARCHAR(100) NOT NULL,
 	StreetAddress NVARCHAR(200) NOT NULL,
 	City NVARCHAR(50) NOT NULL,
 	State NVARCHAR(50) NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE HoleResult (
 	CONSTRAINT FK_HoleResult_GolfRound FOREIGN KEY (GolfRoundId) REFERENCES GolfRound(GolfRoundId)
 );
 
-INSERT INTO COURSE (Name, StreetAddress, City, State, PostalCode) VALUES
+INSERT INTO COURSE (CourseName, StreetAddress, City, State, PostalCode) VALUES
 	('Avon Oaks Country Club', '32300 Detroit Rd', 'Avon', 'OH', '44011'),
 	('Big Met Golf Course', '4811 Valley Parkway', 'Fairview Park', 'OH', '44126'),
 	('Bob-O-Link Golf Course - Blue/Gold', '4141 Center Rd', 'Avon', 'OH', '44011'),

@@ -9,28 +9,43 @@ using System.Threading.Tasks;
 
 namespace HandicapTrackerAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PlayersController : ControllerBase
     {
-        private readonly IPlayerDAO dao;
+        private readonly IPlayerDAO playerDAO;
         public PlayersController(IPlayerDAO playerDAO)
         {
-            dao = playerDAO;
+            this.playerDAO = playerDAO;
         }
 
         [HttpGet]
         public ActionResult<List<Player>> ListPlayers()
         {
-            List<Player> players = dao.ListPlayers();
+            List<Player> players = playerDAO.ListPlayers();
 
             return players;
+        }
+
+        [HttpGet("login")]
+        public ActionResult<Player> SearchByUsernamePassword(string username, string password)
+        {
+            Player player = playerDAO.GetPlayerByUsernamePassword(username, password);
+
+            if (player != null)
+            {
+                return Ok(player);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("{id}", Name = "player")]
         public ActionResult<Player> GetPlayerById(int id)
         {
-            Player player = dao.GetPlayerById(id);
+            Player player = playerDAO.GetPlayerById(id);
 
             if (player != null)
             {
@@ -46,7 +61,7 @@ namespace HandicapTrackerAPI.Controllers
         public ActionResult<Player> CreatePlayer(Player player)
         {
 
-            Player createdPlayer = dao.CreatePlayer(player);
+            Player createdPlayer = playerDAO.CreatePlayer(player);
 
             return CreatedAtRoute("player", new { id = createdPlayer.PlayerId }, createdPlayer);
 
@@ -60,7 +75,7 @@ namespace HandicapTrackerAPI.Controllers
                 return BadRequest();
             }
 
-            Player updatedPlayer = dao.UpdatePlayer(player);
+            Player updatedPlayer = playerDAO.UpdatePlayer(player);
 
             if (updatedPlayer != null)
             {
