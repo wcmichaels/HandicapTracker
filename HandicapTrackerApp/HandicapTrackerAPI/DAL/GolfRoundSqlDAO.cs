@@ -13,7 +13,12 @@ namespace HandicapTrackerAPI.DAL
         private const string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=GolfAppDB;Trusted_Connection=true;";
         private const string SQL_GET_GOLF_ROUNDS_BY_PLAYERID = "SELECT * FROM GolfRound WHERE PlayerId = @playerId;";
         private const string SQL_CREATE_GOLF_ROUND = @"INSERT INTO GolfRound (PlayerId, TeeId, DatePlayed, Score) VALUES
-                                                        (@playerId, @teeId, @datePlayed, @score); SELECT @@IDENTITY;";
+                                                        (@playerId, @teeId, @datePlayed, @score);
+                                                     SELECT * FROM GolfRound gr
+                                                        JOIN Tee t ON t.TeeId = gr.TeeId
+                                                        JOIN Course c ON c.CourseId = t.CourseId
+                                                        WHERE gr.GolfRoundId = @@IDENTITY;";
+        private const string SQL_GET_GOLF_ROUND_BY_ID = "SELECT * FROM GolfRound WHERE GolfRoundId = @golfRoundId";
 
         public List<GolfRound> GetGolfRoundsByPlayerId(int playerId)
         {
@@ -45,6 +50,34 @@ namespace HandicapTrackerAPI.DAL
                 throw;
             }
         }
+        public GolfRound GetGolfRoundById(int id)
+        {
+            GolfRound round = null;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_GET_GOLF_ROUND_BY_ID, conn);
+                    cmd.Parameters.AddWithValue("@golfRoundId", id);
+                    SqlDataReader rdr = cmd.ExecuteReader();
+
+                    if (rdr.Read())
+                    {
+                        round = RowToObject(rdr);
+                    }
+
+                    return round;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
 
         public GolfRound CreateGolfRound(GolfRound round)
         {
@@ -66,7 +99,12 @@ namespace HandicapTrackerAPI.DAL
 
                     if (rdr.Read())
                     {
+                        Tee tee = TeeSqlDAO.RowToObject(rdr);
+                        Course course = CourseSqlDAO.RowToObject(rdr);
                         createdRound = RowToObject(rdr);
+                        tee.Course = course;
+                        createdRound.Tee = tee;
+
                     }
 
                     return createdRound;

@@ -9,6 +9,9 @@ namespace HandicapTrackerAPI.DAL
 {
     public class CourseSqlDAO : ICourseDAO
     {
+        private const string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=GolfAppDB;Trusted_Connection=true;";
+
+
         internal static Course RowToObject(SqlDataReader rdr)
         {
             Course course = new Course();

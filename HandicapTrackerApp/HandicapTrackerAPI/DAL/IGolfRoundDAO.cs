@@ -9,5 +9,6 @@ namespace HandicapTrackerAPI.DAL
     public interface IGolfRoundDAO
     {
         GolfRound CreateGolfRound(GolfRound round);
+        GolfRound GetGolfRoundById(int id);
     }
 }

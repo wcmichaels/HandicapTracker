@@ -11,6 +11,7 @@ namespace HandicapTrackerCLI.Models
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public double Handicap { get; set; }
         public DateTime DOB { get; set; }
         public string StreetAddress { get; set; }
         public string City { get; set; }

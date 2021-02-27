@@ -11,10 +11,12 @@ namespace HandicapTrackerCLI.Views
     {
         private IPlayerDAO playerDAO;
         private IGolfRoundDAO golfRoundDAO;
-        public MainMenu(IPlayerDAO playerDAO, IGolfRoundDAO golfRoundDAO)
+        private ITeeDAO teeDAO;
+        public MainMenu(IPlayerDAO playerDAO, IGolfRoundDAO golfRoundDAO, ITeeDAO teeDAO)
         {
             this.playerDAO = playerDAO;
             this.golfRoundDAO = golfRoundDAO;
+            this.teeDAO = teeDAO;
 
             AddOption("Login", Login)
                 .AddOption("CreatePlayer", CreatePlayer)
@@ -42,7 +44,7 @@ namespace HandicapTrackerCLI.Views
                 {
                     Console.WriteLine("Succesful login!");
                     Console.ReadLine();
-                    PlayerMenu playerMenu = new PlayerMenu(player);
+                    PlayerMenu playerMenu = new PlayerMenu(player, teeDAO);
                     playerMenu.Show();
                 }
                 else

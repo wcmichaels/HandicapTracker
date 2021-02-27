@@ -11,7 +11,8 @@ namespace HandicapTrackerCLI
         {
             IPlayerDAO playerDAO = new PlayerApiDAO(apiUrl);
             IGolfRoundDAO golfRoundDAO = new GolfRoundApiDAO(apiUrl);
-            MainMenu mainMenu = new MainMenu(playerDAO, golfRoundDAO);
+            ITeeDAO teeDAO = new TeeApiDAO(apiUrl);
+            MainMenu mainMenu = new MainMenu(playerDAO, golfRoundDAO, teeDAO);
             mainMenu.Show();
         }
     }
