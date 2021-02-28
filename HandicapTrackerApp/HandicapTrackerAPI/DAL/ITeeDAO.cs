@@ -9,6 +9,6 @@ namespace HandicapTrackerAPI.DAL
     public interface ITeeDAO
     {
         public List<Tee> GetTees();
-
+        Tee GetTeeWithHolesById(int teeId);
     }
 }

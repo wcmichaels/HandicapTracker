@@ -29,5 +29,21 @@ namespace HandicapTrackerAPI.Controllers
             return Ok(tees);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<Tee> GetTeeById(int id)
+        {
+            Tee tee = teeDAO.GetTeeWithHolesById(id);
+
+            if (tee != null)
+            {
+                return Ok(tee);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+
     }
 }

@@ -14,5 +14,7 @@ namespace HandicapTrackerAPI.Models
         public string State { get; set; }
         public string CountryCode { get; set; }
         public string PostalCode { get; set; }
+        public List<Hole> Holes { get; set; } = new List<Hole>();
+
     }
 }

@@ -1,10 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace HandicapTrackerAPI.Models
+namespace HandicapTrackerCLI.Models
 {
     public class Hole
     {
@@ -13,5 +11,6 @@ namespace HandicapTrackerAPI.Models
         public Course Course { get; set; }
         public int ParScore { get; set; }
         public int HoleIndex { get; set; }
+
     }
 }

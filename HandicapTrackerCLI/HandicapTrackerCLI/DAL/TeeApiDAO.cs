@@ -24,6 +24,18 @@ namespace HandicapTrackerCLI.DAL
 
         }
 
+        public Tee GetTeeWithHoles(int teeId)
+        {
+            RestRequest request = new RestRequest($"tees/{teeId}");
+
+            IRestResponse<Tee> response = client.Get<Tee>(request);
+
+            CheckResponse(response);
+
+            return response.Data;
+        }
+
+
         private static void CheckResponse(IRestResponse response)
         {
             if (response.ResponseStatus != ResponseStatus.Completed)

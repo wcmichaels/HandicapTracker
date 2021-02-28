@@ -5,9 +5,8 @@ using System.Text;
 
 namespace HandicapTrackerCLI.DAL
 {
-    public interface ITeeDAO
+    public interface ICourseDAO
     {
-        public List<Tee> GetAllTees();
-        public Tee GetTeeWithHoles(int teeId);
+
     }
 }

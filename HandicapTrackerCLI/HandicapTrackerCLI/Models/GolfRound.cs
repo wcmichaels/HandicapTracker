@@ -13,5 +13,7 @@ namespace HandicapTrackerCLI.Models
         public DateTime DatePlayed { get; set; }
         public int Score { get; set; }
         public Tee Tee { get; set; }
+        public List<HoleResult> HoleResults { get; set; } = new List<HoleResult>();
+
     }
 }
