@@ -21,7 +21,20 @@ namespace HandicapTrackerCLI.DAL
 
             IRestResponse<Player> response = client.Get<Player>(request);
 
-            CheckResponse(response);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new Exception("Error - unable to reach server");
+            }
+
+            if ((int)response.StatusCode == 404)
+            {
+                throw new Exception("Invalid login credentials");
+            }
+
+            if (!response.IsSuccessful)
+            {
+                throw new Exception($"Error - server returned error response {response.StatusCode} {(int)response.StatusCode}");
+            }
 
             return response.Data;
         }
@@ -38,16 +51,39 @@ namespace HandicapTrackerCLI.DAL
             return response.Data;
         }
 
+        public Player CreatePlayer(Player player)
+        {
+            RestRequest request = new RestRequest("players");
+            request.AddJsonBody(player);
+            IRestResponse<Player> response = client.Post<Player>(request);
+
+
+
+            CheckResponse(response);
+
+            return response.Data;
+        }
+
+        public bool CheckIfUsernameAvailable(string username)
+        {
+            RestRequest request = new RestRequest($"players/create?username={username}");
+
+            IRestResponse<bool> response = client.Get<bool>(request);
+
+            CheckResponse(response);
+
+            return response.Data;
+
+        }
+
+
         private static void CheckResponse(IRestResponse response)
         {
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
                 throw new Exception("Error - unable to reach server");
             }
-            if ((int)response.StatusCode == 404)
-            {
-                throw new Exception("Invalid login credentials");
-            }
+
             if (!response.IsSuccessful)
             {
                 throw new Exception($"Error - server returned error response {response.StatusCode} {(int)response.StatusCode}");

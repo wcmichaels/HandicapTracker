@@ -14,6 +14,7 @@ namespace HandicapTrackerAPI.DAL
         Player CreatePlayer(Player player);
         Player UpdatePlayer(Player player);
         void UpdateHandicap(double handicap, int playerId);
+        public bool CheckIfUsernameAvailable(string username);
 
     }
 }

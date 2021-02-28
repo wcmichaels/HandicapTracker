@@ -30,8 +30,8 @@ namespace HandicapTrackerCLI.Views
         {
             player = playerDAO.GetPlayerById(player.PlayerId);
 
-            Console.WriteLine("*******************************************************");
-            Console.WriteLine($"************ Current Handicap Index: {player.Handicap:F1} *************");
+            Console.WriteLine("********************************************************");
+            Console.WriteLine($"              Current Handicap Index: {player.Handicap:F1}               ");
             Console.WriteLine("********************************************************");
             foreach (GolfRound round in player.GolfRounds)
             {

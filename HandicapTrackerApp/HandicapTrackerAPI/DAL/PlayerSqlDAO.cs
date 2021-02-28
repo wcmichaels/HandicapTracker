@@ -18,15 +18,17 @@ namespace HandicapTrackerAPI.DAL
         private const string SQL_GET_PLAYERID_BY_USERNAME_PASSWORD = @"SELECT PlayerId FROM Player WHERE Username = @username AND Password = @password;";
         private const string SQL_LIST_PLAYERS = "SELECT * FROM Player";
         private const string SQL_CREATE_PLAYER = @"INSERT INTO PLAYER
-                                                    (FirstName, LastName, UserName, Password, DOB, StreetAddress, City, State,
+                                                    (FirstName, LastName, UserName, Password, Handicap, DOB, StreetAddress, City, State,
                                                      CountryCode, PostalCode, Email, Phone)
-                                                     Values (@firstName, @lastName, @username, @password, @dob, @streetAddress, @city, @state,
+                                                     Values (@firstName, @lastName, @username, @password, @handicap, @dob, @streetAddress, @city, @state,
                                                      @countryCode, @postalCode, @email, @phone); SELECT * FROM Player WHERE PlayerId = @@IDENTITY;";
         private const string SQL_UPDATE_PLAYER = @"UPDATE PLAYER SET FirstName = @firstName, LastName = @lastName, UserName = @username, Password = @password,
                                                  DOB = @dob, StreetAddress = @streetAddress, City = @city, State = @state, CountryCode = @countryCode,
                                                  PostalCode = @postalCode, Email = @email, Phone = @phone WHERE PlayerId = @playerId;
                                                  SELECT * FROM Player WHERE PlayerId = @playerId";
         private const string SQL_UPDATE_HANDICAP = "UPDATE Player SET Handicap = @handicap WHERE PlayerId = @playerId;";
+        private const string SQL_CHECK_IF_USERNAME_AVAILABLE = "SELECT COUNT(*) FROM Player WHERE Username = @username;";
+       
 
         public Player GetPlayerById(int playerId)
         {
@@ -114,6 +116,7 @@ namespace HandicapTrackerAPI.DAL
                 {
                     conn.Open();
 
+
                     SqlCommand cmd = new SqlCommand(SQL_LIST_PLAYERS, conn);
                     SqlDataReader rdr = cmd.ExecuteReader();
 
@@ -134,8 +137,39 @@ namespace HandicapTrackerAPI.DAL
             }
         }
 
+
+        public bool CheckIfUsernameAvailable(string username)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_CHECK_IF_USERNAME_AVAILABLE, conn);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    int countOfUsername = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    if (countOfUsername == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
         public Player CreatePlayer(Player player)
         {
+            // TODO - make handicap nullable.  Maybe should give handicap until log 3 full rounds
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -196,6 +230,7 @@ namespace HandicapTrackerAPI.DAL
             cmd.Parameters.AddWithValue("@lastName", player.LastName);
             cmd.Parameters.AddWithValue("@username", player.Username);
             cmd.Parameters.AddWithValue("@password", player.Password);
+            cmd.Parameters.AddWithValue("@handicap", player.Handicap);
             cmd.Parameters.AddWithValue("@dob", player.DOB);
             cmd.Parameters.AddWithValue("@streetAddress", player.StreetAddress);
             cmd.Parameters.AddWithValue("@city", player.City);

@@ -9,6 +9,9 @@ namespace HandicapTrackerCLI.DAL
     {
         Player GetPlayerByUsernamePassword(string username, string password);
         Player GetPlayerById(int playerId);
+        Player CreatePlayer(Player player);
+        bool CheckIfUsernameAvailable(string username);
+
 
     }
 }

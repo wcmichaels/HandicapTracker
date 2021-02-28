@@ -22,9 +22,27 @@ namespace HandicapTrackerAPI.Controllers
         [HttpGet]
         public ActionResult<List<Player>> ListPlayers()
         {
+
             List<Player> players = playerDAO.ListPlayers();
 
+
             return players;
+        }
+
+        [HttpGet("create")]
+        public ActionResult<bool> CheckIfUsernameAvailable(string username)
+        {
+            bool usernameAvailable = playerDAO.CheckIfUsernameAvailable(username);
+
+            if (usernameAvailable)
+            {
+                return Ok(true);
+            }
+            else
+            {
+                return Ok(false);
+            }
+
         }
 
         [HttpGet("login")]
