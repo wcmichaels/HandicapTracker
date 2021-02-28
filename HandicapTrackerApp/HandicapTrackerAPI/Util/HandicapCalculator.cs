@@ -8,85 +8,102 @@ namespace HandicapTrackerAPI.Util
 {
     public static class HandicapCalculator
     {
-        public static double HandicapCalculation(List<GolfRound> orderedRounds)
+        public static List<double> CalculateScoreDifferentials(List<GolfRound> rounds)
         {
-            List<GolfRound> orderedRounds = orderedRounds.OrderByDescending(x => x.DatePlayed).ToList();
+            List<double> output = new List<double>();
 
-            double runningTotalScore = 0;
-            double output;
+            List<GolfRound> orderedRounds = rounds.OrderByDescending(x => x.DatePlayed).ToList();
 
-            if (orderedRounds.Count == 3)
+            foreach (GolfRound round in rounds)
             {
-                output = orderedRounds[0];
-                output = output - 2;
+                double scoreDifferential = ((double)round.Score - round.Tee.RatingFull) * (113.0 / round.Tee.SlopeFull);
+                output.Add(scoreDifferential);
             }
-            else if (orderedRounds.Count == 4)
+
+            return output;
+        }
+
+        public static double CalculateHandicap(List<double> scoreDifferentials)
+        {
+  
+
+            double runningTotal = 0;
+            double handicap;
+
+            // TODO - might technically need 3 scores for a handicap
+            if (scoreDifferentials.Count <= 3)
             {
-                output = orderedRounds[0];
-                output = output - 1;
+                handicap = scoreDifferentials[0];
+                handicap = handicap - 2;
             }
-            else if (orderedRounds.Count == 5)
+            else if (scoreDifferentials.Count == 4)
             {
-                output = orderedRounds[0];
+                handicap = scoreDifferentials[0];
+                handicap = handicap - 1;
             }
-            else if (orderedRounds.Count == 6)
+            else if (scoreDifferentials.Count == 5)
             {
-                output = ((orderedRounds[0] + orderedRounds[1]) / 2);
-                output = output - 1;
+                handicap = scoreDifferentials[0];
             }
-            else if (orderedRounds.Count == 7 || orderedRounds.Count == 8)
+            else if (scoreDifferentials.Count == 6)
             {
-                output = ((orderedRounds[0] + orderedRounds[1]) / 2);
+                handicap = ((scoreDifferentials[0] + scoreDifferentials[1]) / 2);
+                handicap = handicap - 1;
             }
-            else if (orderedRounds.Count >= 9 || orderedRounds.Count <= 11)
+            else if (scoreDifferentials.Count == 7 || scoreDifferentials.Count == 8)
+            {
+                handicap = ((scoreDifferentials[0] + scoreDifferentials[1]) / 2);
+            }
+            else if (scoreDifferentials.Count >= 9 || scoreDifferentials.Count <= 11)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    runningTotalScore += orderedRounds[i];
+                    runningTotal += scoreDifferentials[i];
                 }
-                output = runningTotalScore / 3;
+                handicap = runningTotal / 3;
             }
-            else if (orderedRounds.Count >= 12 || orderedRounds.Count <= 14)
+            else if (scoreDifferentials.Count >= 12 || scoreDifferentials.Count <= 14)
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    runningTotalScore += orderedRounds[i];
+                    runningTotal += scoreDifferentials[i];
                 }
-                output = runningTotalScore / 4;
+                handicap = runningTotal / 4;
             }
-            else if (orderedRounds.Count >= 15 || orderedRounds.Count <= 16)
+            else if (scoreDifferentials.Count >= 15 || scoreDifferentials.Count <= 16)
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    runningTotalScore += orderedRounds[i];
+                    runningTotal += scoreDifferentials[i];
                 }
-                output = runningTotalScore / 5;
+                handicap = runningTotal / 5;
             }
-            else if (orderedRounds.Count >= 17 || orderedRounds.Count <= 18)
+            else if (scoreDifferentials.Count >= 17 || scoreDifferentials.Count <= 18)
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    runningTotalScore += orderedRounds[i];
+                    runningTotal += scoreDifferentials[i];
                 }
-                output = runningTotalScore / 6;
+                handicap = runningTotal / 6;
             }
-            else if (orderedRounds.Count == 19)
+            else if (scoreDifferentials.Count == 19)
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    runningTotalScore += orderedRounds[i];
+                    runningTotal += scoreDifferentials[i];
                 }
-                output = runningTotalScore / 7;
+                handicap = runningTotal / 7;
             }
             else
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    runningTotalScore += orderedRounds[i];
+                    runningTotal += scoreDifferentials[i];
                 }
-                output = runningTotalScore / 8;
+                handicap = runningTotal / 8;
             }
-            return output;
+
+            return handicap;
 
         }
     }

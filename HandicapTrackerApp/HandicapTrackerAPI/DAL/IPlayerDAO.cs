@@ -13,5 +13,7 @@ namespace HandicapTrackerAPI.DAL
         List<Player> ListPlayers();
         Player CreatePlayer(Player player);
         Player UpdatePlayer(Player player);
+        void UpdateHandicap(double handicap, int playerId);
+
     }
 }

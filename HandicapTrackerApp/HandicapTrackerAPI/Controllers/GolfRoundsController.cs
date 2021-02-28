@@ -1,5 +1,6 @@
 ﻿using HandicapTrackerAPI.DAL;
 using HandicapTrackerAPI.Models;
+using HandicapTrackerAPI.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,10 +15,12 @@ namespace HandicapTrackerAPI.Controllers
     public class GolfRoundsController : ControllerBase
     {
         private IGolfRoundDAO golfRoundDAO;
+        private IPlayerDAO playerDAO;
 
-        public GolfRoundsController(IGolfRoundDAO golfRoundDAO)
+        public GolfRoundsController(IGolfRoundDAO golfRoundDAO, IPlayerDAO playerDAO)
         {
             this.golfRoundDAO = golfRoundDAO;
+            this.playerDAO = playerDAO;
         }
 
         [HttpGet("{id}", Name = "round")]
@@ -48,14 +51,19 @@ namespace HandicapTrackerAPI.Controllers
              * in util the class should be a static class
              */
 
-            if (createdRound != null)
-            {
-                return CreatedAtRoute("round", new { id = createdRound.GolfRoundId }, createdRound);
-            }
-            else
+            if (createdRound == null)
             {
                 return BadRequest();
             }
+
+            List<GolfRound> rounds = golfRoundDAO.GetGolfRoundsByPlayerId(createdRound.PlayerId);
+            List<double> scoreDifferentials = HandicapCalculator.CalculateScoreDifferentials(rounds);
+            double handicap = HandicapCalculator.CalculateHandicap(scoreDifferentials);
+            playerDAO.UpdateHandicap(handicap, createdRound.PlayerId);
+
+            return CreatedAtRoute("round", new { id = createdRound.GolfRoundId }, createdRound);
+
+
         }
 
     }

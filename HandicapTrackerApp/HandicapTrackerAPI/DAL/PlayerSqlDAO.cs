@@ -26,6 +26,7 @@ namespace HandicapTrackerAPI.DAL
                                                  DOB = @dob, StreetAddress = @streetAddress, City = @city, State = @state, CountryCode = @countryCode,
                                                  PostalCode = @postalCode, Email = @email, Phone = @phone WHERE PlayerId = @playerId;
                                                  SELECT * FROM Player WHERE PlayerId = @playerId";
+        private const string SQL_UPDATE_HANDICAP = "UPDATE Player SET Handicap = @handicap WHERE PlayerId = @playerId;";
 
         public Player GetPlayerById(int playerId)
         {
@@ -166,6 +167,28 @@ namespace HandicapTrackerAPI.DAL
             }
         }
 
+        public void UpdateHandicap(double handicap, int playerId)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_UPDATE_HANDICAP, conn);
+                    cmd.Parameters.AddWithValue("@handicap", handicap);
+                    cmd.Parameters.AddWithValue("@playerId", playerId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
         private static void AddPlayerParameters(Player player, SqlCommand cmd)
         {
             cmd.Parameters.AddWithValue("@playerId", player.PlayerId);
@@ -224,6 +247,7 @@ namespace HandicapTrackerAPI.DAL
             player.LastName = Convert.ToString(rdr["LastName"]);
             player.Username = Convert.ToString(rdr["Username"]);
             player.Password = Convert.ToString(rdr["Password"]);
+            player.Handicap = Convert.ToDouble(rdr["Handicap"]);
             player.DOB = Convert.ToDateTime(rdr["DOB"]);
             player.StreetAddress = Convert.ToString(rdr["StreetAddress"]);
             player.City = Convert.ToString(rdr["City"]);

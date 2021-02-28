@@ -26,6 +26,18 @@ namespace HandicapTrackerCLI.DAL
             return response.Data;
         }
 
+        public Player GetPlayerById(int playerId)
+        {
+            // TODO - this is just being used right now to get handicap back.  Too much data over the wire just for that?
+            RestRequest request = new RestRequest($"players/{playerId}");
+
+            IRestResponse<Player> response = client.Get<Player>(request);
+
+            CheckResponse(response);
+
+            return response.Data;
+        }
+
         private static void CheckResponse(IRestResponse response)
         {
             if (response.ResponseStatus != ResponseStatus.Completed)

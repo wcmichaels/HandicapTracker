@@ -10,12 +10,14 @@ namespace HandicapTrackerCLI.Views
     public class PlayerMenu : ConsoleMenu
     {
         private Player player;
+        private IPlayerDAO playerDAO;
         private ITeeDAO teeDAO;
         private IGolfRoundDAO golfRoundDAO;
 
-        public PlayerMenu(Player player, ITeeDAO teeDAO, IGolfRoundDAO golfRoundDAO)
+        public PlayerMenu(Player player, IPlayerDAO playerDAO, ITeeDAO teeDAO, IGolfRoundDAO golfRoundDAO)
         {
             this.player = player;
+            this.playerDAO = playerDAO;
             this.teeDAO = teeDAO;
             this.golfRoundDAO = golfRoundDAO;
 
@@ -26,6 +28,11 @@ namespace HandicapTrackerCLI.Views
 
         private MenuOptionResult ViewRoundHistory()
         {
+            player = playerDAO.GetPlayerById(player.PlayerId);
+
+            Console.WriteLine("*******************************************************");
+            Console.WriteLine($"************ Current Handicap Index: {player.Handicap:F1} *************");
+            Console.WriteLine("********************************************************");
             foreach (GolfRound round in player.GolfRounds)
             {
                 Console.WriteLine($"{round.Tee.Course.CourseName} - {round.Tee.Name} Tees, Score: {round.Score}, Date Played: {round.DatePlayed:d}");

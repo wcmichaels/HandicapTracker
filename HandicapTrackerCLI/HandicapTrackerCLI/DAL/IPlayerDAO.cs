@@ -7,6 +7,8 @@ namespace HandicapTrackerCLI.DAL
 {
     public interface IPlayerDAO
     {
-        public Player GetPlayerByUsernamePassword(string username, string password);
+        Player GetPlayerByUsernamePassword(string username, string password);
+        Player GetPlayerById(int playerId);
+
     }
 }

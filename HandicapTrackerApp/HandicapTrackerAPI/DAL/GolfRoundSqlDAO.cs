@@ -11,7 +11,10 @@ namespace HandicapTrackerAPI.DAL
     {
 
         private const string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=GolfAppDB;Trusted_Connection=true;";
-        private const string SQL_GET_GOLF_ROUNDS_BY_PLAYERID = "SELECT * FROM GolfRound WHERE PlayerId = @playerId;";
+        private const string SQL_GET_GOLF_ROUNDS_BY_PLAYERID = @"SELECT * FROM GolfRound gr
+                                                                JOIN Tee t ON t.TeeId = gr.TeeId
+                                                                JOIN Course c ON c.CourseId = t.CourseId
+                                                                WHERE PlayerId = @playerId;";
         private const string SQL_CREATE_GOLF_ROUND = @"INSERT INTO GolfRound (PlayerId, TeeId, DatePlayed, Score) VALUES
                                                         (@playerId, @teeId, @datePlayed, @score);
                                                      SELECT * FROM GolfRound gr
@@ -19,6 +22,7 @@ namespace HandicapTrackerAPI.DAL
                                                         JOIN Course c ON c.CourseId = t.CourseId
                                                         WHERE gr.GolfRoundId = @@IDENTITY;";
         private const string SQL_GET_GOLF_ROUND_BY_ID = "SELECT * FROM GolfRound WHERE GolfRoundId = @golfRoundId";
+        private const string SQL_UPDATE_HANDICAP = "UPDATE Player SET Handicap = @handicap WHERE PlayerId = @playerId;";
 
         public List<GolfRound> GetGolfRoundsByPlayerId(int playerId)
         {
@@ -37,6 +41,10 @@ namespace HandicapTrackerAPI.DAL
                     while (rdr.Read())
                     {
                         GolfRound golfRound = RowToObject(rdr);
+                        Course course = CourseSqlDAO.RowToObject(rdr);
+                        Tee tee = TeeSqlDAO.RowToObject(rdr);
+                        tee.Course = course;
+                        golfRound.Tee = tee;
                         golfRounds.Add(golfRound);
                     }
 
@@ -116,7 +124,6 @@ namespace HandicapTrackerAPI.DAL
                 throw;
             }
         }
-
 
         internal static GolfRound RowToObject(SqlDataReader rdr)
         {
