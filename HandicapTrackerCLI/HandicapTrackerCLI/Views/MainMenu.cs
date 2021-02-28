@@ -44,7 +44,7 @@ namespace HandicapTrackerCLI.Views
                 {
                     Console.WriteLine("Succesful login!");
                     Console.ReadLine();
-                    PlayerMenu playerMenu = new PlayerMenu(player, teeDAO);
+                    PlayerMenu playerMenu = new PlayerMenu(player, teeDAO, golfRoundDAO);
                     playerMenu.Show();
                 }
                 else

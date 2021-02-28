@@ -11,11 +11,13 @@ namespace HandicapTrackerCLI.Views
     {
         private Player player;
         private ITeeDAO teeDAO;
+        private IGolfRoundDAO golfRoundDAO;
 
-        public PlayerMenu(Player player, ITeeDAO teeDAO)
+        public PlayerMenu(Player player, ITeeDAO teeDAO, IGolfRoundDAO golfRoundDAO)
         {
             this.player = player;
             this.teeDAO = teeDAO;
+            this.golfRoundDAO = golfRoundDAO;
 
             AddOption("Log Round", LogRound)
                 .AddOption("View Round History", ViewRoundHistory)
@@ -39,9 +41,9 @@ namespace HandicapTrackerCLI.Views
 
             List<Tee> tees = teeDAO.GetAllTees();
 
-            foreach (Tee tee in tees)
+            foreach (Tee t in tees)
             {
-                Console.WriteLine($"{tee.TeeId}: {tee.Course.CourseName}: Tees: {tee.Name}");
+                Console.WriteLine($"{t.TeeId}: {t.Course.CourseName}: Tees: {t.Name}");
             }
 
             int teeId = GetInteger("Please enter the number course and tee combination you would like to log your round for: ");
@@ -50,8 +52,10 @@ namespace HandicapTrackerCLI.Views
 
             Tee tee = GetTeeByTeeId(tees, teeId);
 
-            GolfRound round = new GolfRound() { PlayerId = player.PlayerId, Tee = tee };
+            GolfRound round = new GolfRound() { PlayerId = player.PlayerId, DatePlayed = datePlayed, Score = score, Tee = tee };
 
+            GolfRound createdRound = golfRoundDAO.CreateGolfRound(round);
+            player.GolfRounds.Add(createdRound);
 
 
             return MenuOptionResult.WaitAfterMenuSelection;
