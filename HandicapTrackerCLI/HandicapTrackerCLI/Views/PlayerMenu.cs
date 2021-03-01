@@ -32,14 +32,16 @@ namespace HandicapTrackerCLI.Views
         {
             player = playerDAO.GetPlayerById(player.PlayerId);
 
-            Console.WriteLine("********************************************************");
-            Console.WriteLine($"              Current Handicap Index: {player.Handicap:F1}               ");
-            Console.WriteLine("********************************************************");
+            Console.WriteLine("************************************************************************************************************************");
+            Console.WriteLine($"                                    Current Handicap Index: {player.Handicap:F1}                                                  ");
+            Console.WriteLine("************************************************************************************************************************");
+
+            Console.WriteLine($"| {"Course",-37} | {"Tees",-20} | {"Score",-8} | {"Par",-5} | {"Course Rating",-14} |");
             foreach (GolfRound round in player.GolfRounds)
             {
-                Console.WriteLine($"{round.Tee.Course.CourseName} - {round.Tee.Name} Tees, Score: {round.Score}, Date Played: {round.DatePlayed:d}");
+                Console.WriteLine($"| { round.Tee.Course.CourseName,-37} | { round.Tee.Name,-20} | { round.Score,-8} | {round.Tee.Course.Par,-5} | {round.Tee.RatingFull,-14} |");
             }
-
+        
 
             return MenuOptionResult.WaitAfterMenuSelection;
         }
@@ -50,19 +52,23 @@ namespace HandicapTrackerCLI.Views
 
             List<Tee> tees = teeDAO.GetAllTees();
 
+            Console.WriteLine($"| {"Id",-4} | {"Course",-37} | {"Tees",-20} | {"Yardage",-10} | {"City",-20} | {"State", -3} ");
+            Console.WriteLine("****************************************************************************************************************************\n");
+
             foreach (Tee t in tees)
             {
-                Console.WriteLine($"{t.TeeId}: {t.Course.CourseName}: Tees: {t.Name}");
+                Console.WriteLine($"| {t.TeeId,-4} | {t.Course.CourseName,-37} | {t.Name,-20} | {t.Yardage,-10} | {t.Course.City,-20} | {t.Course.State,-3}");
             }
 
-            int teeId = GetInteger("Please enter the number course and tee combination you would like to log your round for: ");
-            DateTime datePlayed = GetDate("Please enter the date the round was played: ");
-            int score = GetInteger("Please enter your score for this round: ");
+            Console.WriteLine("\n\n************************************************************************************************************************");
+
+            int teeId = GetInteger("Enter the Id to select a course: ");
+            DateTime datePlayed = GetDate("Date played (MM-DD-YYYY): ");
             string answerToStats = GetString("Do you want to enter hole-by-hole stats for this round? (Y/N): ");
 
             Tee tee = GetTeeByTeeId(tees, teeId);
 
-            GolfRound round = new GolfRound() { PlayerId = player.PlayerId, DatePlayed = datePlayed, Score = score, Tee = tee };
+            GolfRound round = new GolfRound() { PlayerId = player.PlayerId, DatePlayed = datePlayed, Tee = tee };
 
             if (answerToStats.ToLower() == "y")
             {
@@ -76,11 +82,18 @@ namespace HandicapTrackerCLI.Views
                 {
                     Console.Clear();
 
-                    Console.WriteLine($"*********{tee.Course.CourseName} - {tee.Name} - {tee.Yardage}**********");
+                    Console.WriteLine($"{tee.Course.CourseName} - {tee.Name} - {tee.Yardage} Yards");
                     Console.WriteLine($"\nHole #:{tee.Course.Holes[i].HoleNumber} Par {tee.Course.Holes[i].ParScore} Handicap: {tee.Course.Holes[i].HoleIndex}\n\n");
                     int holeScore = GetInteger("Score: ");
                     int putts = GetInteger("Putts: ");
-                    string hitFairwayString = GetString("Hit Fairway (Y/N): ");
+
+                    bool? hitFairway = null;
+                    if (tee.Course.Holes[i].ParScore != 3)
+                    {
+                        string hitFairwayString = GetString("Hit Fairway (Y/N): ");
+                        hitFairway = GetBoolFromStringAnswer(hitFairwayString);
+                    }
+
                     string inGreensideBunkerString = GetString("In Greenside Bunker (Y/N): ");
                     string outOfBoundsString = GetString("Out of Bounds (Y/N): ");
                     string inWaterString = GetString("Water (Y/N): ");
@@ -91,22 +104,40 @@ namespace HandicapTrackerCLI.Views
                     holeResult.Hole = tee.Course.Holes[i];
                     holeResult.Score = holeScore;
                     holeResult.Putts = putts;
-                    holeResult.HitFairway = GetBoolFromStringAnswer(hitFairwayString);
+                    holeResult.HitFairway = hitFairway;
                     holeResult.InGreensideBunker = GetBoolFromStringAnswer(inGreensideBunkerString);
                     holeResult.OutOfBounds = GetBoolFromStringAnswer(outOfBoundsString);
                     holeResult.InWater = GetBoolFromStringAnswer(inWaterString);
                     holeResult.DropOrOther = GetBoolFromStringAnswer(dropOrOtherString);
 
                     round.HoleResults.Add(holeResult);
-
                 }
 
+                round.Score = CalculateRoundScoreByHoleResults(round);
+            }
+            else
+            {
+                round.Score = GetInteger("Round Score: ");
             }
 
             GolfRound createdRound = golfRoundDAO.CreateGolfRound(round);
             player.GolfRounds.Add(createdRound);
 
+            Console.WriteLine("\n\nSuccessfully logged round!");
+
             return MenuOptionResult.WaitAfterMenuSelection;
+        }
+
+        private static int CalculateRoundScoreByHoleResults(GolfRound round)
+        {
+            int totalScore = 0;
+
+            foreach (HoleResult hr in round.HoleResults)
+            {
+                totalScore += hr.Score;
+            }
+
+            return totalScore;
         }
 
         // TODO move this method out of UI

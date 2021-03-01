@@ -61,7 +61,7 @@ namespace HandicapTrackerCLI.Views
             player.DOB = GetDate("Date of birth (MM-DD-YYYY): ");
             player.StreetAddress = GetString("Street address: ");
             player.City = GetString("City: ");
-            player.State = GetString("state: ");
+            player.State = GetString("State: ");
             player.CountryCode = GetString("Three letter country code (ex: 'USA'): ");
             player.PostalCode = GetString("PostalCode: ");
             player.Email = GetString("Email: ");

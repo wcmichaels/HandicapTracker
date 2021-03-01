@@ -18,6 +18,7 @@ namespace HandicapTrackerAPI.DAL
 
             course.CourseId = Convert.ToInt32(rdr["CourseId"]);
             course.CourseName = Convert.ToString(rdr["CourseName"]);
+            course.Par = Convert.ToInt32(rdr["Par"]);
             course.StreetAddress = Convert.ToString(rdr["StreetAddress"]);
             course.City = Convert.ToString(rdr["City"]);
             course.State = Convert.ToString(rdr["State"]);

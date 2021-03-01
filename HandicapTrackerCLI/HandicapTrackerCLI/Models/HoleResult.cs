@@ -10,7 +10,7 @@ namespace HandicapTrackerCLI.Models
         //public int GolfRound { get; set; }
         public Hole Hole { get; set; }
         public int Score { get; set; }
-        public bool HitFairway { get; set; }
+        public bool? HitFairway { get; set; }
         public int Putts { get; set; }
         public bool InGreensideBunker { get; set; }
         public bool OutOfBounds { get; set; }

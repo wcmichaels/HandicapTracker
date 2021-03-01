@@ -147,12 +147,21 @@ namespace HandicapTrackerAPI.DAL
                 cmd.Parameters.AddWithValue("@golfRoundId", roundId);
                 cmd.Parameters.AddWithValue("@holeId", round.Tee.Course.Holes[i].HoleId);
                 cmd.Parameters.AddWithValue("@score", round.HoleResults[i].Score);
-                cmd.Parameters.AddWithValue("@hitFairway", round.HoleResults[i].HitFairway);
                 cmd.Parameters.AddWithValue("@putts", round.HoleResults[i].Putts);
                 cmd.Parameters.AddWithValue("@inGreensideBunker", round.HoleResults[i].InGreensideBunker);
                 cmd.Parameters.AddWithValue("@outOfBounds", round.HoleResults[i].OutOfBounds);
                 cmd.Parameters.AddWithValue("@inWater", round.HoleResults[i].InWater);
                 cmd.Parameters.AddWithValue("@dropOrOther", round.HoleResults[i].DropOrOther);
+
+                if (round.HoleResults[i].HitFairway == null)
+                {
+                    cmd.Parameters.AddWithValue("@hitFairway", DBNull.Value);
+                }
+                else
+                {
+
+                    cmd.Parameters.AddWithValue("@hitFairway", round.HoleResults[i].HitFairway);
+                }
 
                 cmd.ExecuteNonQuery();
             }
